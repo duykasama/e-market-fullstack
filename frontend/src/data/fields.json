@@ -1,0 +1,5 @@
+{
+  "customer": ["ID", "FirstName", "LastName", "Address", "Age", "Status"],
+  "contract": ["ID", "CustomerID", "ApartmentID", "StartDate", "EndDate"],
+  "apartment": ["Address", "RentalPrice", "NumberOfRooms"]
+}

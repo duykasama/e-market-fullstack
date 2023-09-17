@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    cyan,
+    blue,
+    orange,
+    cyan,
+    blue,
+    orange,
+    cyan,
+    blue,
+    orange
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  user-select: none;
+}

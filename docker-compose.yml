@@ -1,0 +1,45 @@
+version: '1.0.1'
+
+services:
+ db:
+  build: ./db
+  image: e-market-db-image
+  container_name: e-market-db
+  ports:
+   - "3307:3306"
+  environment:
+   MYSQL_ROOT_PASSWORD: '12345'
+  volumes:
+   - mysql-db-volume:/var/lib/mysql
+   - ./db/lavender_company_ddl.sql:/docker-entrypoint-initdb.d/data.sql
+  networks: 
+   - internal
+
+ api:
+  depends_on: 
+   - db
+  build: ./api
+  image: e-market-api-image
+  container_name: e-market-api
+  ports:
+   - "10000:8080"
+  networks: 
+   - internal
+   - external
+
+ frontend:
+  build: ./frontend
+  image: e-market-frontend-image
+  container_name: e-market-frontend
+  ports:
+   - "10001:80"
+  networks:
+   - external
+ 
+
+volumes:
+ mysql-db-volume:
+
+networks:
+ internal:
+ external:
