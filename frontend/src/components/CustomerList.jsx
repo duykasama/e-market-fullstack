@@ -16,14 +16,26 @@ function CustomerList({ customers, currentPage }) {
         customers.map((customer, idx) => (
           <div
             key={v4()}
-            className="row-span-1 grid grid-cols-6 text-center gap-10"
+            className="row-span-1 grid grid-cols-6 text-center gap-10 rounded-2xl hover:bg-slate-600 hover:text-gray-100 transition"
           >
-            <div>{(currentPage - 1) * 5 + idx + 1}</div>
-            <div>{customer.firstName}</div>
-            <div>{customer.lastName}</div>
-            <div>{customer.address}</div>
-            <div>{customer.age}</div>
-            <div>{customer.status}</div>
+            <div className="flex items-center justify-center">
+              {(currentPage - 1) * 5 + idx + 1}
+            </div>
+            <div className="flex items-center justify-center">
+              {customer.firstName}
+            </div>
+            <div className="flex items-center justify-center">
+              {customer.lastName}
+            </div>
+            <div className="flex items-center justify-center">
+              {customer.address}
+            </div>
+            <div className="flex items-center justify-center">
+              {customer.age}
+            </div>
+            <div className="flex items-center justify-center">
+              {customer.status}
+            </div>
           </div>
         ))}
     </section>

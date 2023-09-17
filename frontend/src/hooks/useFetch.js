@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../lib/api/axios";
 
-const useFetch = (url) => {
+const useFetch = (endpoint) => {
   const [data, setData] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState(null);
@@ -9,7 +9,7 @@ const useFetch = (url) => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get(url, {
+        const response = await axios.get(endpoint, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -28,7 +28,7 @@ const useFetch = (url) => {
 
     setIsPending(true);
     getData();
-  }, [url]);
+  }, [endpoint]);
 
   return { data, isPending, error };
 };

@@ -14,12 +14,20 @@ function ApartmentList({ apartments, currentPage }) {
         apartments.map((apartment, idx) => (
           <div
             key={v4()}
-            className="row-span-1 grid grid-cols-4 text-center gap-10"
+            className="row-span-1 grid grid-cols-4 text-center gap-10 rounded-2xl hover:bg-slate-600 hover:text-gray-100 transition"
           >
-            <div>{(currentPage - 1) * 5 + idx + 1}</div>
-            <div>{apartment.address}</div>
-            <div>{apartment.rentalPrice}</div>
-            <div>{apartment.numberOfRooms}</div>
+            <div className="flex items-center justify-center">
+              {(currentPage - 1) * 5 + idx + 1}
+            </div>
+            <div className="flex items-center justify-center">
+              {apartment.address}
+            </div>
+            <div className="flex items-center justify-center">
+              {apartment.rentalPrice}
+            </div>
+            <div className="flex items-center justify-center">
+              {apartment.numberOfRooms}
+            </div>
           </div>
         ))}
     </section>

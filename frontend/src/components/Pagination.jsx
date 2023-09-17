@@ -11,7 +11,7 @@ function Pagination({ isFirstPage, isLastPage, onPaginationNextPage, onPaginatio
       <ul className="flex justify-center items-center gap-4">
         <li
           onClick={onPaginationPrevPage}
-          className={`p-1 border-slate-700 rounded-md w-12 h-8 text-center cursor-pointer bg-slate-300 hover:scale-110 transition shadow-sm hover:shadow-black${isFirstPage && " cursor-no-drop pointer-events-none"}`}
+          className={`p-1 border-slate-700 rounded-md w-12 h-8 text-center cursor-pointer bg-slate-300 hover:scale-110 transition shadow-sm hover:shadow-black${isFirstPage && " cursor-no-drop pointer-events-none opacity-50"}`}
         >
           <Link>
             <FontAwesomeIcon icon={faChevronLeft} />
@@ -28,7 +28,7 @@ function Pagination({ isFirstPage, isLastPage, onPaginationNextPage, onPaginatio
         </li>
         <li
           onClick={onPaginationNextPage}
-          className={`p-1 border-slate-700 rounded-md w-12 h-8 text-center cursor-pointer bg-slate-300 hover:scale-110 transition shadow-sm hover:shadow-black${isLastPage && " cursor-no-drop pointer-events-none"}`}
+          className={`p-1 border-slate-700 rounded-md w-12 h-8 text-center cursor-pointer bg-slate-300 hover:scale-110 transition shadow-sm hover:shadow-black${isLastPage && " cursor-no-drop pointer-events-none opacity-50"}`}
         >
           <Link>
             <FontAwesomeIcon icon={faChevronRight} />

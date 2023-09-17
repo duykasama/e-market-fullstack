@@ -1,4 +1,8 @@
-import { faCircleCheck, faCircleXmark, faClose } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleCheck,
+  faCircleXmark,
+  faClose,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import axios from "../../lib/api/axios";
@@ -13,7 +17,7 @@ function AddNewApartment({ onCloseModal }) {
 
   const [isPending, setIsPending] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [failure, setFailure] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleAddApartment = async (event) => {
     event.preventDefault();
@@ -33,12 +37,10 @@ function AddNewApartment({ onCloseModal }) {
       if (response.data.statusCode === 200) {
         setSuccess(true);
       } else {
-        setFailure(true);
+        throw new Exception(response.data.message);
       }
-    } catch {
-      await new Promise((r) => setTimeout(r, 500));
-      setFailure(true);
-      setIsPending(false);
+    } catch (e) {
+      setError(e.message);
     }
 
     await new Promise((r) => setTimeout(r, 500));
@@ -71,7 +73,7 @@ function AddNewApartment({ onCloseModal }) {
           <p className="font-semibold mt-6">New apartment added successfully</p>
         </div>
       )}
-      {!isPending && failure && (
+      {!isPending && error && (
         <div className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center">
           <div className="w-full flex justify-end">
             <button
@@ -88,6 +90,7 @@ function AddNewApartment({ onCloseModal }) {
           <p className="font-semibold mt-6">
             An error occurred, could not add new apartment
           </p>
+          {error && <p className="font-semibold mt-6">{error}</p>}
         </div>
       )}
       {isPending ? (
@@ -97,7 +100,7 @@ function AddNewApartment({ onCloseModal }) {
         </div>
       ) : (
         !success &&
-        !failure && (
+        !error && (
           <form
             onSubmit={handleAddApartment}
             className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal"

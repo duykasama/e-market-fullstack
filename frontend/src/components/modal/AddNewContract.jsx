@@ -10,10 +10,11 @@ import useApartments from "../../hooks/useApartments";
 import { v4 } from "uuid";
 import axios from "../../lib/api/axios";
 import Loading from "../ui/Loading";
+import useFetch from "../../hooks/useFetch";
 
 function AddNewContract({ onCloseModal }) {
-  const { customers } = useCustomers();
-  const { apartments } = useApartments();
+  const { data: customers } = useFetch("/customers");
+  const { data: apartments } = useFetch("/apartments");
 
   let formData = {
     customerId: "",
@@ -24,7 +25,7 @@ function AddNewContract({ onCloseModal }) {
 
   const [isPending, setIsPending] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [failure, setFailure] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleAddContract = async (event) => {
     event.preventDefault();
@@ -44,16 +45,15 @@ function AddNewContract({ onCloseModal }) {
 
       if (response.data.statusCode === 200) {
         setSuccess(true);
+      } else {
+        throw new Exception(response.data.message);
       }
-    } catch {
-      await new Promise((r) => setTimeout(r, 2000));
-      setFailure(true);
-      setIsPending(false);
+    } catch (e) {
+      setError(e.message);
     }
 
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 500));
     setIsPending(false);
-    console.log("Add contract");
   };
 
   const handleFormDataChange = (event) => {
@@ -79,7 +79,7 @@ function AddNewContract({ onCloseModal }) {
           <p className="font-semibold mt-6">New contract added successfully</p>
         </div>
       )}
-      {!isPending && failure && (
+      {!isPending && error && (
         <div className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center">
           <div className="w-full flex justify-end">
             <button
@@ -96,6 +96,7 @@ function AddNewContract({ onCloseModal }) {
           <p className="font-semibold mt-6">
             An error occurred, could not add new contract
           </p>
+          {error && <p className="font-semibold mt-6">{error}</p>}
         </div>
       )}
       {isPending ? (
@@ -105,7 +106,7 @@ function AddNewContract({ onCloseModal }) {
         </div>
       ) : (
         !success &&
-        !failure && (
+        !error && (
           <form
             onSubmit={handleAddContract}
             className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal"

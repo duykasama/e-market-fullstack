@@ -15,13 +15,23 @@ function ContractList({ contracts, currentPage }) {
         contracts.map((contract, idx) => (
           <div
             key={v4()}
-            className="row-span-1 grid grid-cols-5 text-center gap-10"
+            className="row-span-1 grid grid-cols-5 text-center gap-10 rounded-2xl hover:bg-slate-600 hover:text-gray-100 transition"
           >
-            <div>{(currentPage - 1) * 5 + idx + 1}</div>
-            <div>{contract.customer.firstName}</div>
-            <div>{contract.apartment.address}</div>
-            <div>{contract.startDate}</div>
-            <div>{contract.endDate}</div>
+            <div className="flex items-center justify-center">
+              {(currentPage - 1) * 5 + idx + 1}
+            </div>
+            <div className="flex items-center justify-center">
+              {contract.customer.firstName}
+            </div>
+            <div className="flex items-center justify-center">
+              {contract.apartment.address}
+            </div>
+            <div className="flex items-center justify-center">
+              {contract.startDate}
+            </div>
+            <div className="flex items-center justify-center">
+              {contract.endDate}
+            </div>
           </div>
         ))}
     </section>

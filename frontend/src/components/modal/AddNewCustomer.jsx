@@ -1,4 +1,8 @@
-import { faCircleCheck, faCircleXmark, faClose } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleCheck,
+  faCircleXmark,
+  faClose,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../lib/api/axios";
 import { useState } from "react";
@@ -14,7 +18,7 @@ function AddNewCustomer({ onCloseModal }) {
   });
   const [isPending, setIsPending] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [failure, setFailure] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleAddCustomer = async (event) => {
     event.preventDefault();
@@ -33,11 +37,11 @@ function AddNewCustomer({ onCloseModal }) {
       );
       if (response.data.statusCode === 200) {
         setSuccess(true);
+      } else {
+        throw new Exception(response.data.message);
       }
-    } catch {
-      await new Promise((r) => setTimeout(r, 500));
-      setFailure(true);
-      setIsPending(false);
+    } catch (e) {
+      setError(e.message);
     }
 
     await new Promise((r) => setTimeout(r, 500));
@@ -70,7 +74,7 @@ function AddNewCustomer({ onCloseModal }) {
           <p className="font-semibold mt-6">New customer added successfully</p>
         </div>
       )}
-      {!isPending && failure && (
+      {!isPending && error && (
         <div className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center">
           <div className="w-full flex justify-end">
             <button
@@ -84,7 +88,10 @@ function AddNewCustomer({ onCloseModal }) {
             icon={faCircleXmark}
             className="text-6xl text-red-600"
           />
-          <p className="font-semibold mt-6">An error occurred, could not add new customer</p>
+          <p className="font-semibold mt-6">
+            An error occurred, could not add new customer
+          </p>
+          {error && <p className="font-semibold mt-6">{error}</p>}
         </div>
       )}
       {isPending ? (
@@ -93,7 +100,8 @@ function AddNewCustomer({ onCloseModal }) {
           <p className="font-semibold">Adding new customer</p>
         </div>
       ) : (
-        !success && !failure && (
+        !success &&
+        !error && (
           <form
             onSubmit={handleAddCustomer}
             className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal"
