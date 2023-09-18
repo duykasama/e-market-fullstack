@@ -13,11 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "customer")
 public class Customer implements Serializable {
     @Id
     @Size(max = 50)
     @Column(name = "ID", nullable = false, length = 50)
-    @GeneratedValue(strategy = GenerationType.UUID)
+
     private String id;
 
     @Size(max = 50)

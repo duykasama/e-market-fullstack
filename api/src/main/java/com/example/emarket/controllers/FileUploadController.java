@@ -51,4 +51,21 @@ public class FileUploadController {
                     );
         }
     }
+    @Autowired
+    public LoadFileCustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+
+    @PostMapping("/upload-customer")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            // Call the service method to process the uploaded file (e.g., save data to the database)
+            InputStream inputStream = file.getInputStream();
+            customerService.loadCustomer(inputStream);
+            return ResponseEntity.status(HttpStatus.OK).body("Data uploaded successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading and processing the file: " + e.getMessage());
+        }
+    }
 }
