@@ -10,9 +10,11 @@ import com.example.emarket.services.CustomerService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -121,10 +123,10 @@ public class ContractController {
             contractService.addNewContract(contract);
 
             return ResponseEntity.ok(
-              ResponseObject.builder()
-                      .statusCode(200)
-                      .message("New contract added successfully")
-                      .build()
+                    ResponseObject.builder()
+                            .statusCode(200)
+                            .message("New contract added successfully")
+                            .build()
             );
 
         } catch (Exception e) {
@@ -138,4 +140,6 @@ public class ContractController {
             );
         }
     }
+
 }
+
