@@ -22,11 +22,11 @@ public class Contract {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "CustomerID")
+    @JoinColumn(name = "customerid")
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "ApartmentID")
+    @JoinColumn(name = "apartmentid")
     private Apartment apartment;
 
     @Column(name = "StartDate")

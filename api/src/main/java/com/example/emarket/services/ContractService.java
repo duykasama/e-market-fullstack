@@ -45,42 +45,71 @@ public class ContractService {
     public Page<Contract> getContractsByPage(Integer pageSize, Integer offset) {
         return contractRepository.findAll(PageRequest.of(offset - 1, pageSize));
     }
+    public List<Contract> saveContracts(List<Contract> contracts) {
+        if (contracts == null || contracts.isEmpty()) {
+            throw new IllegalArgumentException("Contracts list cannot be null or empty");
+        }
 
-    @Transactional
+        List<Contract> validContracts = new ArrayList<>();
+        for (Contract contract : contracts) {
+            if (isValidContract(contract)) {
+                validContracts.add(contract);
+            }
+        }
+
+        if (!validContracts.isEmpty()) {
+            contractRepository.saveAll(validContracts);
+        }
+
+        return validContracts;
+    }
+
+    private boolean isValidContract(Contract contract) {
+        if (contract == null) {
+            return false; // Contract cannot be null
+        }
+
+        if (contract.getStartDate() == null || contract.getEndDate() == null) {
+            return false; // Start and end date are required fields
+        }
+
+        if (contract.getApartment() == null || contract.getCustomer() == null) {
+            return false; // Apartment and customer must be specified
+        }
+
+        return true; // If all validation checks pass
+    }
+
     public void loadContracts(MultipartFile file) {
         List<String> failureContracts = new ArrayList<>();
+        List<Contract> contractsToSave = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("contract")) {
-                    String[] data = line.split(","); // assuming CSV format
-                    if (data.length < 5) { // check for missing data
-                        failureContracts.add(file.getOriginalFilename());
-                        continue;
-                    }
-
-                    String contractId = data[0];
-                    Optional<Contract> existingContract = contractRepository.findById(contractId);
-                    if (existingContract.isPresent()) { // check for duplicate data
-                        continue;
-                    }
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    Contract contract = new Contract();
-                    // You need to fetch the existing Customer and Apartment entities from the database
-                    Customer customer = customerRepository.findById(data[2]).orElse(null);
-                    Apartment apartment = apartmentRepository.findById(data[1]).orElse(null);
-                    contract.setCustomer(customer);
-                    contract.setApartment(apartment);
-                    contract.setEndDate(LocalDate.parse(data[3], formatter));
-                    contract.setStartDate(LocalDate.parse(data[4], formatter));
-                    contractRepository.save(contract);
+                String[] data = line.split(","); // assuming CSV format
+                if (data[0].trim().equalsIgnoreCase("start_date")) {
+                    continue;
                 }
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                Contract contract = new Contract();
+                // You need to fetch the existing Customer and Apartment entities from the database
+                Customer customer = customerRepository.findById(data[3]).orElse(null);
+                Apartment apartment = apartmentRepository.findById(data[2]).orElse(null);
+                contract.setCustomer(customer);
+                contract.setApartment(apartment);
+                contract.setEndDate(LocalDate.parse(data[1], formatter));
+                contract.setStartDate(LocalDate.parse(data[0], formatter));
+                contractsToSave.add(contract);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
+
+        if (!contractsToSave.isEmpty()) {
+            contractRepository.saveAll(contractsToSave);
+        }
+
     }
-
-
 }

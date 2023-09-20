@@ -31,6 +31,17 @@ public class FileUploadController {
         logger.info("Start to save data from files");
 
         try {
+            for (MultipartFile file : files) {
+                String fileName = file.getOriginalFilename();
+                if (fileName.startsWith("customer")) {
+                    // process customer file
+                } else if (fileName.startsWith("apartment")) {
+                    // process apartment file
+                } else if (fileName.startsWith("contract")) {
+                    // process contract file
+                    contractService.loadContracts(file);
+                }
+            }
 
             return ResponseEntity.ok(
                     ResponseObject.builder()
@@ -70,11 +81,5 @@ public class FileUploadController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading and processing the file: " + e.getMessage());
         }
     }
-    @PostMapping("/upload-contract")
-    public ResponseEntity<String> uploadContracts(@RequestParam("files") MultipartFile[] files) {
-        for (MultipartFile file : files) {
-            contractService.loadContracts(file);
-        }
-        return ResponseEntity.ok("Contracts uploaded successfully");
-    }
+
 }

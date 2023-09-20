@@ -140,6 +140,13 @@ public class ContractController {
             );
         }
     }
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadContracts(@RequestParam("files") MultipartFile[] files) {
+        for (MultipartFile file : files) {
+            contractService.loadContracts(file);
+        }
+        return ResponseEntity.ok("Contracts uploaded successfully");
+    }
 
 }
 
