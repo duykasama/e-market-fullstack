@@ -1,4 +1,4 @@
-package com.example.emarket.models;
+package com.example.emarket.models.entities;
 
 import com.example.emarket.enums.Role;
 import jakarta.persistence.*;
@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -26,7 +27,7 @@ public class User implements UserDetails {
     @Length(max = 50)
     private String email;
 
-    @Length(max = 50)
+    @Length(max = 100)
     private String password;
 
     @Length(max = 50)

@@ -23,9 +23,9 @@ function GridView({
   return (
     <>
       {showModal && <Modal onCloseModal={() => setShowModal(false)} />}
-      <div className="p-4 bg-slate-400 rounded-lg w-full h-full grid grid-rows-6 gap-4 shadow-lg shadow-gray-600">
-        <div className="flex justify-between items-center row-span-1">
-          <h2 className="text-4xl font-semibold">{title}</h2>
+      <div className="p-4 bg-slate-400 rounded-lg sm:w-full h-full grid grid-rows-6 gap-4 shadow-lg shadow-gray-600">
+        <div className="flex sm:justify-between justify-end items-center row-span-1">
+          <h2 className="text-4xl font-semibold sm:block hidden">{title}</h2>
           <div>
             <button
               onClick={() => setShowModal(true)}

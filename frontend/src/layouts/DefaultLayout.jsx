@@ -5,37 +5,39 @@ import Index from "../pages/Index";
 import Customers from "../pages/Customers";
 import Contracts from "../pages/Contracts";
 import Apartments from "../pages/Apartments";
-import customerList from "../data/customers.json";
-import contractList from "../data/contracts.json";
-import apartmentList from "../data/apartments.json";
 import UploadFiles from "../pages/UploadFiles";
 import NotFound from "../pages/NotFound";
+import RequireAuth from "../components/RequireAuth";
+import SignIn from "../pages/SignIn";
+import SignUp from "../pages/SignUp";
+import SignOut from "../pages/SignOut";
+import Unauthorized from "../pages/Unauthorized";
+import PersistLogin from "../components/PersistLogin";
 
 function DefaultLayout() {
   return (
-    <div className="grid grid-cols-6 grid-rows-6 min-h-screen">
-      <div className="bg-slate-600 col-span-1 row-span-full">
+    <div className="grid grid-cols-12 grid-rows-6 min-h-screen">
+      <div className="bg-slate-600 sm:col-span-2 col-span-1 row-span-full">
         <SideBar />
       </div>
-      <div className="bg-slate-200 row-span-1 col-end-7 row-start-1 col-start-2">
+      <div className="bg-slate-200 row-span-1 col-end-13 row-start-1 sm:col-start-3 col-start-2">
         <Header />
       </div>
-      <main className="row-start-2 col-start-2 col-end-7 row-end-7">
+      <main className="row-start-2 sm:col-start-3 col-start-2 col-end-13 row-end-7">
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route
-            path="/customers"
-            element={<Customers customers={customerList} />}
-          />
-          <Route
-            path="/contracts"
-            element={<Contracts contracts={contractList} />}
-          />
-          <Route
-            path="/apartments"
-            element={<Apartments apartments={apartmentList} />}
-          />
-          <Route path="/upload-files" element={<UploadFiles />} />
+          <Route element={<PersistLogin />}>
+            <Route element={<RequireAuth allowedRoles={["USER"]} />}>
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/contracts" element={<Contracts />} />
+              <Route path="/apartments" element={<Apartments />} />
+              <Route path="/upload-files" element={<UploadFiles />} />
+            </Route>
+          </Route>
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/sign-out" element={<SignOut />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

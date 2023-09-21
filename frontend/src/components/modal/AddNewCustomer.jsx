@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../lib/api/axios";
 import { useState } from "react";
 import Loading from "../ui/Loading";
+import useAuth from "../../hooks/useAuth";
+import { CUSTOMERS_ENPOINT } from "../../data/apiInfo";
 
 function AddNewCustomer({ onCloseModal }) {
   const [formData, setFormData] = useState({
@@ -19,22 +21,21 @@ function AddNewCustomer({ onCloseModal }) {
   const [isPending, setIsPending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const { auth } = useAuth();
 
   const handleAddCustomer = async (event) => {
     event.preventDefault();
     setIsPending(true);
     try {
-      const response = await axios.post(
-        "/customers",
-        {
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
+      const response = await axios.post(CUSTOMERS_ENPOINT, formData, {
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + auth?.accessToken,
         },
-        { params: formData }
-      );
+        withCredentials: true,
+        params: formData,
+      });
       if (response.data.statusCode === 200) {
         setSuccess(true);
       } else {
@@ -104,7 +105,7 @@ function AddNewCustomer({ onCloseModal }) {
         !error && (
           <form
             onSubmit={handleAddCustomer}
-            className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal"
+            className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal z-10"
           >
             <div className="w-full flex justify-end">
               <button

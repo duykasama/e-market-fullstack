@@ -5,6 +5,7 @@ import Loading from "../components/ui/Loading";
 import { faFaceSadTear } from "@fortawesome/free-solid-svg-icons";
 import useFetch from "../hooks/useFetch";
 import { useState } from "react";
+import { APARTMENTS_ENDPOINT } from "../data/apiInfo";
 
 function Apartments() {
   const [offset, setOffset] = useState(1);
@@ -13,7 +14,7 @@ function Apartments() {
     offset: offset,
   }).toString();
   const { data, isPending, error } = useFetch(
-    `/apartments/pagination?${params}`
+    `${APARTMENTS_ENDPOINT}/pagination?${params}`
   );
 
   const handleNextPage = () => {

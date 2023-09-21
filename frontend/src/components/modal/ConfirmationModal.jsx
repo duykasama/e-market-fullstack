@@ -1,14 +1,11 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
 
 function ConfirmationModal({
   setShowConfirmModal,
   setShowModal,
   setShowFileUploader,
 }) {
-  const [upLoadFile, setUpLoadFile] = useState(false);
-  const [addMannualy, setAddMannually] = useState(false);
 
   const handleUploadFile = () => {
     setShowConfirmModal(false);

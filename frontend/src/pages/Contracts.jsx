@@ -5,6 +5,7 @@ import Loading from "../components/ui/Loading";
 import { faFaceSadTear } from "@fortawesome/free-solid-svg-icons";
 import useFetch from "../hooks/useFetch";
 import { useState } from "react";
+import { CONTRACTS_ENDPOINT } from "../data/apiInfo";
 
 function Contracts() {
   const [offset, setOffset] = useState(1);
@@ -13,7 +14,7 @@ function Contracts() {
     offset: offset,
   }).toString();
   const { data, isPending, error } = useFetch(
-    `/contracts/pagination?${params}`
+    `${CONTRACTS_ENDPOINT}/pagination?${params}`
   );
 
   const handleNextPage = () => {

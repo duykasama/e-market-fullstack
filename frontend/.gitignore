@@ -23,4 +23,6 @@ dist-ssr
 *.sw?
 
 .vercel
-
+Dockerfile
+.dockerignore
+*.conf

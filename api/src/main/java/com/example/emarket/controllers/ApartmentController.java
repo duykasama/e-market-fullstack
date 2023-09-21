@@ -2,10 +2,9 @@ package com.example.emarket.controllers;
 
 import com.example.emarket.exceptions.BadRequestException;
 import com.example.emarket.models.entities.Apartment;
-import com.example.emarket.models.entities.Customer;
 import com.example.emarket.responses.ResponseObject;
 import com.example.emarket.services.ApartmentService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -15,19 +14,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
-@AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "https://lavender-company-fe.vercel.app", "http://localhost:10001", "http://e-market-frontend:80", "http://localhost:80"}, allowCredentials = "true", allowedHeaders = "*")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/apartments")
 public class ApartmentController {
 
     private final ApartmentService apartmentService;
     private final Logger logger = LogManager.getLogger(ApartmentController.class);
-
-    @GetMapping("/uri")
-    public String getUri() {
-        return ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri().toString();
-    }
 
     @GetMapping
     public ResponseEntity<ResponseObject> getAllApartments() {
@@ -102,9 +95,10 @@ public class ApartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseObject> addApartment(String address,
-                             String rentalPrice,
-                             Integer numberOfRooms
+    public ResponseEntity<ResponseObject> addApartment(
+            String address,
+            String rentalPrice,
+            Integer numberOfRooms
     ) {
         logger.info("Start to add new apartment");
 

@@ -1,10 +1,10 @@
 import GridView from "../components/GridView";
 import AddNewCustomer from "../components/modal/AddNewCustomer";
 import useFetch from "../hooks/useFetch";
-import Loading from "../components/ui/Loading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceSadTear } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { CUSTOMERS_ENPOINT } from "../data/apiInfo";
 
 function Customers() {
   const [offset, setOffset] = useState(1);
@@ -13,7 +13,7 @@ function Customers() {
     offset: offset,
   }).toString();
   const { data, isPending, error } = useFetch(
-    `/customers/pagination?${params}`
+    `${CUSTOMERS_ENPOINT}/pagination?${params}`
   );
 
   const handleNextPage = () => {

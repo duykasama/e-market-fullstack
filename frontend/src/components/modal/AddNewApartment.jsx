@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import axios from "../../lib/api/axios";
 import Loading from "../ui/Loading";
+import { APARTMENTS_ENDPOINT } from "../../data/apiInfo";
+import useAuth from "../../hooks/useAuth";
 
 function AddNewApartment({ onCloseModal }) {
   const [formData, setFormData] = useState({
@@ -18,21 +20,23 @@ function AddNewApartment({ onCloseModal }) {
   const [isPending, setIsPending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+  const { auth } = useAuth();
 
   const handleAddApartment = async (event) => {
     event.preventDefault();
     setIsPending(true);
     try {
       const response = await axios.post(
-        "/apartments",
+        APARTMENTS_ENDPOINT,
+        formData,
         {
           headers: {
-            Accept: "*/*",
             "Content-Type": "application/json",
+            Authorization: "Bearer " + auth?.accessToken,
           },
           withCredentials: true,
-        },
-        { params: formData }
+          params: formData,
+        }
       );
       if (response.data.statusCode === 200) {
         setSuccess(true);
@@ -103,7 +107,7 @@ function AddNewApartment({ onCloseModal }) {
         !error && (
           <form
             onSubmit={handleAddApartment}
-            className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal"
+            className="absolute bg-slate-700 p-10 rounded-lg shadow-lg shadow-black flex flex-col justify-center items-center modal z-10"
           >
             <div className="w-full flex justify-end">
               <button

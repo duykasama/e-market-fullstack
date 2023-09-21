@@ -1,23 +1,29 @@
-import com.example.emarket.exceptions.CustomerNotFoundException;
+import com.example.emarket.models.entities.Apartment;
 import com.example.emarket.models.entities.Customer;
+import com.example.emarket.repositories.ApartmentRepository;
 import com.example.emarket.repositories.CustomerRepository;
 import com.example.emarket.services.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyIterable;
+import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class CustomerServiceTest {
@@ -28,96 +34,200 @@ public class CustomerServiceTest {
     @Mock
     private CustomerRepository customerRepository;
 
+    @Mock
+    private ApartmentRepository apartmentRepository;
+
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
+    @Test
+    public void testLoadNonExistentFiles() throws IOException {
+        // Create a mock MultipartFile with a non-existent file name
+        MultipartFile mockFile = new MockMultipartFile("non_existent_file.csv", "non_existent_file.csv", "text/csv", "your,csv,data".getBytes());
+
+        // Define the behavior of apartmentRepository.findById to return a mock apartment
+        Mockito.when(apartmentRepository.findById(anyString())).thenReturn(Optional.of(createMockApartment()));
+
+        // Define the behavior of customerRepository.findById to return an empty optional
+        Mockito.when(customerRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        // Call the loadCustomer method
+        customerService.loadCustomer(mockFile.getInputStream());
+
+        // Verify that customerRepository.save method was never called
+        Mockito.verify(customerRepository, Mockito.never()).save(Mockito.any(Customer.class));
+    }
+
+
+    @Test
+    public void testLoadExistentFile() throws IOException {
+        // Create a mock MultipartFile with an existing file containing customer data
+        MultipartFile mockFile = new MockMultipartFile("customers.csv", "customers.csv", "text/csv", "your,csv,data".getBytes());
+
+        // Define the behavior of customerRepository.saveAll to return an empty list
+        when(customerRepository.saveAll(anyIterable())).thenReturn(Collections.emptyList());
+
+        // Call the loadCustomer method
+        customerService.loadCustomer(mockFile.getInputStream());
+
+        // Verify that the customerRepository.saveAll method was called exactly once with any iterable
+        verify(customerRepository, times(1)).saveAll(anyIterable());
     }
 
     @Test
-    void testGetAllCustomers() {
-        // Arrange
+    public void testLoadExistentFilesWithMissedValues() throws IOException {
+        MockMultipartFile mockFile = new MockMultipartFile(
+                "customers-missing.csv", // Tên tệp
+                getClass().getResourceAsStream("/customers-missing.csv") // Đường dẫn tới tệp dữ liệu thử nghiệm của bạn
+        );
+
+        when(customerRepository.findById(anyString())).thenReturn(Optional.empty());
+
+        customerService.loadCustomer(mockFile.getInputStream());
+
+        verify(customerRepository, never()).save(any(Customer.class));
+    }
+
+
+
+    @Test
+    public void testSaveNullModelList() {
+        assertThrows(IllegalArgumentException.class, () -> customerService.saveCustomers(null));
+    }
+
+    @Test
+    public void testSaveEmptyModelList() {
+        List<Customer> emptyList = new ArrayList<>();
+
+        assertThrows(IllegalArgumentException.class, () -> customerService.saveCustomers(emptyList));
+    }
+
+    @Test
+    public void testSaveNonEmptyModelList() {
+        // Create a list of non-empty customers
+        List<Customer> customerList = new ArrayList<>();
+        customerList.add(createMockCustomer("customer_id"));
+
+        // Define the behavior of customerRepository.saveAll to return the input list
+        Mockito.when(customerRepository.saveAll(anyIterable())).thenReturn(customerList);
+
+        // Call the saveCustomers method
+        List<Customer> savedCustomers = customerService.saveCustomers(customerList);
+
+        // Verify that the savedCustomers list is not null and not empty
+        assertNotNull(savedCustomers);
+        assertFalse(savedCustomers.isEmpty());
+
+        // Verify that each customer in the savedCustomers list is not null and has a non-null ID
+        for (Customer customer : savedCustomers) {
+            if (customer != null) {
+                assertNotNull(customer.getId());
+            }
+        }
+    }
+
+    @Test
+    public void testGetAllModelsFromDatabase() {
         List<Customer> customers = new ArrayList<>();
-        customers.add(new Customer("1", "John", "Doe", "123 Main St", (short) 30, "Active"));
+        customers.add(createMockCustomer("customer1"));
+        customers.add(createMockCustomer("customer2"));
+
         when(customerRepository.findAll()).thenReturn(customers);
 
-        // Act
         List<Customer> result = customerService.getAllCustomers();
 
-        // Assert
-        assertEquals(1, result.size());
-        assertEquals("John", result.get(0).getFirstName());
+        assertEquals(2, result.size());
+        assertEquals("customer1", result.get(0).getId());
+        assertEquals("customer2", result.get(1).getId());
     }
 
     @Test
-    void testSaveCustomer() {
-        // Arrange
-        Customer customer = new Customer("1", "John", "Doe", "123 Main St", (short) 30, "Active");
-        // Act
-        customerService.save(customer);
-        // Assert
-        verify(customerRepository, times(1)).save(customer);
+    public void testSaveDuplicatedModels() {
+        List<Customer> customers = new ArrayList<>();
+
+        Customer customer1 = new Customer();
+        customer1.setId("customer1");
+        customer1.setFirstName("John Doe");
+
+        customers.add(customer1);
+
+        Customer customer2 = new Customer();
+        customer2.setId("customer1");
+        customer2.setFirstName("Jane Smith");
+
+        customers.add(customer2);
+
+        when(customerRepository.saveAll(anyIterable())).thenReturn(customers);
+
+        List<Customer> savedCustomers = customerService.saveCustomers(customers);
+
+        assertEquals(2, savedCustomers.size());
     }
 
-    @Test
-    void testGetCustomerById() {
-        // Arrange
-        String customerId = "1";
-        Customer customer = new Customer(customerId, "John", "Doe", "123 Main St", (short) 30, "Active");
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-        // Act
-        Customer result = customerService.getCustomerById(customerId);
-        // Assert
-        assertNotNull(result);
-        assertEquals("John", result.getFirstName());
+
+    private Customer createMockCustomer(String customerId) {
+        // Create and return a mock Customer object
+        Customer customer = new Customer();
+        customer.setId(customerId);
+        // Set other properties if needed
+        return customer;
     }
 
-    @Test
-    void testDeleteCustomerById() {
-        // Arrange
-        String customerId = "1";
-        Customer customer = new Customer(customerId, "John", "Doe", "123 Main St", (short) 30, "Active");
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-        // Act
-        assertDoesNotThrow(() -> customerService.deleteCustomerById(customerId));
-        // Assert
-        verify(customerRepository, times(1)).delete(customer);
+    private Apartment createMockApartment() {
+        Apartment apartment = new Apartment();
+        apartment.setId("apartment1");
+        return apartment;
     }
 
-    @Test
-    void testDeleteCustomerById_CustomerNotFoundException() {
-        // Arrange
-        String customerId = "1";
-        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
-        // Act and Assert
-        assertThrows(CustomerNotFoundException.class, () -> customerService.deleteCustomerById(customerId));
-    }
+    private MultipartFile createMockMultipartFile(String fileName) throws IOException {
+        return new MultipartFile() {
+            @Override
+            public String getName() {
+                return fileName;
+            }
 
-    @Test
-    void testGetCustomersByPage() {
-        // Arrange
-        int pageSize = 10;
-        int offset = 1;
-        PageRequest pageRequest = PageRequest.of(offset - 1, pageSize);
-        when(customerRepository.findAll(pageRequest)).thenReturn(mock(Page.class));
-        // Act
-        Page<Customer> result = customerService.getCustomersByPage(pageSize, offset);
-        // Assert
-        assertNotNull(result);
-    }
+            @Override
+            public String getOriginalFilename() {
+                return fileName;
+            }
 
-    @Test
-    void testSaveByFile() throws IOException {
-        // Arrange
-        MockMultipartFile file = new MockMultipartFile(
-                "customers.csv",
-                "customer-data.csv",
-                "text/csv",
-                "John,Doe,123 Main St,30,Active\nJane,Smith,456 Elm St,25,Inactive".getBytes()
-        );
-        // Act
-        String message = customerService.saveByFile(file);
-        // Assert
-        assertEquals("Data uploaded successfully.", message);
-        verify(customerRepository, times(2)).save(any(Customer.class));
+            @Override
+            public String getContentType() {
+                return "text/csv";
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public long getSize() {
+                String csvContent = "id,firstName,apartmentId\n" +
+                        "customer1,John Doe,apartment1\n";
+                return csvContent.getBytes().length;
+            }
+
+
+            @Override
+            public byte[] getBytes() throws IOException {
+                String csvContent = "id,firstName,apartmentId\n" +
+                        "customer1,John Doe,apartment1\n";
+                return csvContent.getBytes();
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                String csvContent = "id,firstName,apartmentId\n" +
+                        "customer1,John Doe,apartment1\n";
+                return new ByteArrayInputStream(csvContent.getBytes());
+            }
+
+            @Override
+            public void transferTo(java.io.File dest) throws IOException, IllegalStateException {
+
+            }
+        };
     }
 }

@@ -1,16 +1,14 @@
 package com.example.emarket.controllers;
 
 import com.example.emarket.exceptions.BadRequestException;
-import com.example.emarket.models.entities.Apartment;
 import com.example.emarket.models.entities.Contract;
 import com.example.emarket.responses.ResponseObject;
 import com.example.emarket.services.ApartmentService;
 import com.example.emarket.services.ContractService;
 import com.example.emarket.services.CustomerService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
-@AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "https://lavender-company-fe.vercel.app", "http://localhost:10001", "http://e-market-frontend:80", "http://localhost:80"}, allowCredentials = "true", allowedHeaders = "*")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/contracts")
 public class ContractController {
@@ -140,13 +137,5 @@ public class ContractController {
             );
         }
     }
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadContracts(@RequestParam("files") MultipartFile[] files) {
-        for (MultipartFile file : files) {
-            contractService.loadContracts(file);
-        }
-        return ResponseEntity.ok("Contracts uploaded successfully");
-    }
-
 }
 

@@ -1,7 +1,5 @@
 package com.example.emarket.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -17,7 +15,7 @@ import java.time.LocalDate;
 public class Contract {
     @Id
     @Size(max = 50)
-    @Column(name = "ID", nullable = false, length = 50)
+    @Column(name = "id", nullable = false, length = 50)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
@@ -29,11 +27,10 @@ public class Contract {
     @JoinColumn(name = "apartment_id")
     private Apartment apartment;
 
-    @Column(name = "StartDate")
+    @Column(name = "start_date")
     private LocalDate startDate;
 
-    @Column(name = "EndDate")
+    @Column(name = "end_date")
     private LocalDate endDate;
-
 
 }

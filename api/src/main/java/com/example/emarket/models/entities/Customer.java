@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter
@@ -13,34 +12,30 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "customer")
 public class Customer implements Serializable {
     @Id
     @Size(max = 50)
-    @Column(name = "ID", nullable = false, length = 50)
+    @Column(name = "id", nullable = false, length = 50)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Size(max = 50)
-    @Column(name = "FirstName", length = 50)
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
     @Size(max = 50)
-    @Column(name = "LastName", length = 50)
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
     @Size(max = 100)
-    @Column(name = "Address", length = 100)
+    @Column(name = "address", length = 100)
     private String address;
 
-    @Column(name = "Age")
+    @Column(name = "age")
     private Short age;
 
     @Size(max = 50)
-    @Column(name = "Status", length = 50)
+    @Column(name = "status", length = 50)
     private String status;
 
-    // Thuộc tính Apartment để liên kết với Apartment
-    @ManyToOne
-    @JoinColumn(name = "apartment_id") // Điều này phụ thuộc vào cách bạn đặt tên cột liên kết trong cơ sở dữ liệu
-    private Apartment apartment;
 }

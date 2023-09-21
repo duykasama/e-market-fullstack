@@ -15,19 +15,19 @@ import java.io.Serializable;
 public class Apartment implements Serializable {
     @Id
     @Size(max = 50)
-    @Column(name = "ID", nullable = false, length = 50)
+    @Column(name = "id", nullable = false, length = 50)
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Size(max = 100)
-    @Column(name = "Address", length = 100)
+    @Column(name = "address", length = 100)
     private String address;
 
     @Size(max = 12)
-    @Column(name = "RentalPrice", length = 12)
+    @Column(name = "rental_price", length = 12)
     private String rentalPrice;
 
-    @Column(name = "NumberOfRooms")
+    @Column(name = "number_of_rooms")
     private Short numberOfRooms;
 
 }

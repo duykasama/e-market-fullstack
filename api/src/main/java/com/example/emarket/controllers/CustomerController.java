@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "https://lavender-company-fe.vercel.app", "http://localhost:10001", "http://e-market-frontend:80", "http://localhost:80"}, allowCredentials = "true", allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
@@ -97,11 +96,12 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseObject> addNewCustomer(@RequestParam String firstName,
-                                                        @RequestParam String lastName,
-                                                        @RequestParam String address,
-                                                        @RequestParam Integer age,
-                                                        @RequestParam String status
+    public ResponseEntity<ResponseObject> addNewCustomer(
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String address,
+            @RequestParam Integer age,
+            @RequestParam String status
     ) {
         logger.info("Start to add new customer");
 
@@ -178,6 +178,4 @@ public class CustomerController {
                     );
         }
     }
-
-
 }
