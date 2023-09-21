@@ -67,6 +67,7 @@
 			<scope>test</scope>
 		</dependency>
 
+
 		<!-- JUnit 5 -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -165,6 +166,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0</version>
 			</plugin>
+
 		</plugins>
 	</build>
 

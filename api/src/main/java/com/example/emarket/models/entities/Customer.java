@@ -18,7 +18,6 @@ public class Customer implements Serializable {
     @Id
     @Size(max = 50)
     @Column(name = "ID", nullable = false, length = 50)
-
     private String id;
 
     @Size(max = 50)
@@ -40,4 +39,8 @@ public class Customer implements Serializable {
     @Column(name = "Status", length = 50)
     private String status;
 
+    // Thuộc tính Apartment để liên kết với Apartment
+    @ManyToOne
+    @JoinColumn(name = "apartment_id") // Điều này phụ thuộc vào cách bạn đặt tên cột liên kết trong cơ sở dữ liệu
+    private Apartment apartment;
 }

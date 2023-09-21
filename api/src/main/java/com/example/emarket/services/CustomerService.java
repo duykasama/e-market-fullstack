@@ -5,6 +5,7 @@ import com.example.emarket.models.entities.Customer;
 import com.example.emarket.repositories.CustomerRepository;
 import com.example.emarket.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,13 +57,11 @@ public class CustomerService {
         return customerRepository.findAll(PageRequest.of(offset-1, pageSize));
     }
 
-    public int loadCustomer(InputStream inputStream) throws IOException {
+    public void loadCustomer(InputStream inputStream) throws IOException {
         List<Customer> customers = new ArrayList<>();
-        int count = 0;
 
-        try (CSVParser csvParser = new CSVParser
-                (new InputStreamReader(inputStream), CSVFormat.DEFAULT.withHeader())) {
-
+        try (CSVParser csvParser = new CSVParser(
+                new InputStreamReader(inputStream), CSVFormat.DEFAULT.withFirstRecordAsHeader())) {
 
             for (CSVRecord record : csvParser) {
                 String customerId = record.get("customerid");
@@ -79,7 +81,6 @@ public class CustomerService {
                         .build();
 
                 customers.add(customer);
-                count++;
             }
         }
 
@@ -88,6 +89,28 @@ public class CustomerService {
         }
 
         customerRepository.saveAll(customers);
-        return count;
     }
+
+
+    public List<Customer> saveCustomers(List<Customer> customers) {
+        if (customers == null || customers.isEmpty()) {
+            throw new IllegalArgumentException("Customer list cannot be null or empty");
+        }
+
+        List<Customer> savedCustomers = new ArrayList<>();
+
+        for (Customer customer : customers) {
+            // Check if a customer with the same ID already exists in the database
+            boolean isDuplicate = customerRepository.existsById(customer.getId());
+
+            if (!isDuplicate) {
+                // If not a duplicate, save the customer to the database
+                Customer savedCustomer = customerRepository.save(customer);
+                savedCustomers.add(savedCustomer);
+            }
+        }
+
+        return savedCustomers;
+    }
+
 }
