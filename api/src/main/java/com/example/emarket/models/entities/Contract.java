@@ -22,11 +22,11 @@ public class Contract {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "CustomerID")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "ApartmentID")
+    @JoinColumn(name = "apartment_id")
     private Apartment apartment;
 
     @Column(name = "StartDate")
@@ -34,5 +34,6 @@ public class Contract {
 
     @Column(name = "EndDate")
     private LocalDate endDate;
+
 
 }

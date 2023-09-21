@@ -149,4 +149,35 @@ public class CustomerController {
             logger.error(e.getMessage());
         }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<ResponseObject> searchCustomer(@RequestParam(name = "keyword") String keyword) {
+        logger.info("Searching for customers by keyword: " + keyword);
+
+        try {
+            List<Customer> customers = customerService.searchCustomersByKeyword(keyword);
+            logger.info("Found customers matching the keyword");
+
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .statusCode(200)
+                            .message("Success")
+                            .data(customers)
+                            .build()
+            );
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            ResponseObject.builder()
+                                    .statusCode(500)
+                                    .message(e.getMessage())
+                                    .build()
+                    );
+        }
+    }
+
+
 }

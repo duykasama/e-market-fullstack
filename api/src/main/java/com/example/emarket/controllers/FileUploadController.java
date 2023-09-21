@@ -1,5 +1,8 @@
 package com.example.emarket.controllers;
 
+import com.example.emarket.repositories.ApartmentRepository;
+import com.example.emarket.repositories.ContractRepository;
+import com.example.emarket.repositories.CustomerRepository;
 import com.example.emarket.responses.ResponseObject;
 import com.example.emarket.services.ApartmentService;
 import com.example.emarket.services.ContractService;
@@ -14,6 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 @RestController
 @CrossOrigin(origins = {"http://localhost:5173", "https://lavender-company-fe.vercel.app", "http://localhost:10001", "http://e-market-frontend:80", "http://localhost:80"}, allowCredentials = "true", allowedHeaders = "*")
 @AllArgsConstructor
@@ -23,6 +31,9 @@ public class FileUploadController {
     private final CustomerService customerService;
     private final ApartmentService apartmentService;
     private final ContractService contractService;
+    private final CustomerRepository customerRepository;
+    private final ApartmentRepository apartmentRepository;
+    private final ContractRepository contractRepository;
 
     private final Logger logger = LogManager.getLogger(FileUploadController.class);
 
@@ -31,7 +42,20 @@ public class FileUploadController {
         logger.info("Start to save data from files");
 
         try {
-
+            if (files != null && files.length > 0) {
+                for (MultipartFile file : files) {
+                    String fileName = file.getOriginalFilename();
+                    if (fileName != null) {
+                        if (fileName.startsWith("Customer")) {
+                            customerService.saveByFile(file);
+                        } else if (fileName.startsWith("Apartment")) {
+                            apartmentService.saveByFile(file);
+                        } else if (fileName.startsWith("Contract")) {
+                            contractService.saveByFile(file);
+                        }
+                    }
+                }
+            }
             return ResponseEntity.ok(
                     ResponseObject.builder()
                             .statusCode(200)
