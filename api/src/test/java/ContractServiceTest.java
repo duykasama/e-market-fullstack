@@ -260,15 +260,15 @@ public class ContractServiceTest {
 
             @Override
             public byte[] getBytes() throws IOException {
-                String csvContent = "start_date,end_date,apartmentId,customerId\n" +
-                        "2023-09-20,2023-09-23,400d7792-d833-49ed-b5bb-ce603cb2b733,dd7da36a-33a7-4315-9fd5-6242bb1eda96\n";
+                String csvContent = "apartmentId,customerId,StartDate,end_date\n" +
+                        "400d7792-d833-49ed-b5bb-ce603cb2b733,dd7da36a-33a7-4315-9fd5-6242bb1eda96,2023-09-20,2023-09-23\n";
                 return csvContent.getBytes();
             }
 
             @Override
             public InputStream getInputStream() throws IOException {
-                String csvContent = "start_date,end_date,apartmentId,customerId\n" +
-                        "2023-09-20,2023-09-23,400d7792-d833-49ed-b5bb-ce603cb2b733,dd7da36a-33a7-4315-9fd5-6242bb1eda96\n";
+                String csvContent = "apartmentId,customerId,StartDate,end_date\n" +
+                        "400d7792-d833-49ed-b5bb-ce603cb2b733,dd7da36a-33a7-4315-9fd5-6242bb1eda96,2023-09-20,2023-09-23\n";
                 return new ByteArrayInputStream(csvContent.getBytes());
             }
 

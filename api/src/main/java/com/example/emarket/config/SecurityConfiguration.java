@@ -27,21 +27,6 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.withUsername("admin")
-                .password("admin")
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)

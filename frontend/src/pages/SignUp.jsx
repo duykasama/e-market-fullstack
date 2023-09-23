@@ -108,7 +108,7 @@ function SignUp() {
               icon={faXmarkCircle}
               className="text-5xl text-red-500"
             />
-            {error && <p className="font-semibold text-red-500">{error}</p>}
+            {error && <p className="font-semibold">{error}</p>}
           </div>
         </div>
       )}

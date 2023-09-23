@@ -50,7 +50,6 @@ public class CustomerController {
         }
     }
 
-    @CrossOrigin
     @GetMapping("/pagination")
     public ResponseEntity<ResponseObject> getCustomersByPage(Integer pageSize, Integer offset) {
         logger.info("Getting customers by page");

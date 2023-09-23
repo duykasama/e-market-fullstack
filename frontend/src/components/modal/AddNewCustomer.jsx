@@ -4,11 +4,11 @@ import {
   faClose,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "../../lib/api/axios";
 import { useState } from "react";
 import Loading from "../ui/Loading";
 import useAuth from "../../hooks/useAuth";
-import { CUSTOMERS_ENPOINT } from "../../data/apiInfo";
+import { CUSTOMERS_ENDPOINT } from "../../data/apiInfo";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 function AddNewCustomer({ onCloseModal }) {
   const [formData, setFormData] = useState({
@@ -22,12 +22,13 @@ function AddNewCustomer({ onCloseModal }) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
   const handleAddCustomer = async (event) => {
     event.preventDefault();
     setIsPending(true);
     try {
-      const response = await axios.post(CUSTOMERS_ENPOINT, formData, {
+      const response = await axiosPrivate.post(CUSTOMERS_ENDPOINT, formData, {
         headers: {
           Accept: "*/*",
           "Content-Type": "application/json",
