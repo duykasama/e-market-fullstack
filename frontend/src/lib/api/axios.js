@@ -1,12 +1,12 @@
 import axios from "axios";
-import { DOMAIN } from "../../data/apiInfo";
+import { BASE_URL } from "../../data/apiInfo";
 
 export default axios.create({
-  baseURL: DOMAIN,
+  baseURL: BASE_URL,
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: DOMAIN,
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     withCredentials: true,

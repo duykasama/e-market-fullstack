@@ -20,13 +20,13 @@ function ApartmentList({ apartments, currentPage }) {
               {(currentPage - 1) * 5 + idx + 1}
             </div>
             <div className="flex items-center justify-center">
-              {apartment.address}
+              {apartment?.address}
             </div>
             <div className="flex items-center justify-center">
-              {apartment.rentalPrice}
+              {apartment?.rentalPrice}
             </div>
             <div className="flex items-center justify-center">
-              {apartment.numberOfRooms}
+              {apartment?.numberOfRooms}
             </div>
           </div>
         ))}

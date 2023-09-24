@@ -3,6 +3,7 @@ package com.example.emarket.services;
 import com.example.emarket.exceptions.TokenExpiredException;
 import com.example.emarket.models.entities.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -25,12 +26,16 @@ public class JwtService {
 
     private static final String SECRET_KEY = "ownrJE4LNVXTBOUdVZ2xmJ7VSDNhKTRJsagLsdS3jLfsOY91basfKf";
     private Claims extractAllClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw e;
+        }
     }
 
     public String extractUsername(String token) {
@@ -51,22 +56,23 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 5))
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
     public String generateToken(UserDetails user) {
         return generateToken(new HashMap<>(), user);
     }
+
     public String generateRefreshToken(UserDetails user) {
         return Jwts
                 .builder()
                 .setClaims(new HashMap<>())
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 20))
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 20))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

@@ -6,7 +6,6 @@ import com.example.emarket.exceptions.UserDoesNotExistException;
 import com.example.emarket.models.entities.User;
 import com.example.emarket.responses.ResponseObject;
 import com.example.emarket.services.JwtService;
-import com.example.emarket.services.RefreshTokenService;
 import com.example.emarket.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
     private final Logger logger = LogManager.getLogger(AuthController.class);
 
     @GetMapping("/refresh")
@@ -33,7 +31,7 @@ public class AuthController {
         ResponseObject responseObject = new ResponseObject();
 
         try {
-            if (refreshTokenService.exists(refreshToken)) {
+            if (refreshToken != null && !refreshToken.isBlank()) {
                 logger.info("Returning new token");
 
                 responseObject.setStatusCode(200);
@@ -57,13 +55,6 @@ public class AuthController {
             return ResponseEntity.status(401)
                     .body(responseObject);
         }
-    }
-
-    @GetMapping("/test-cookie")
-    public String testCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("username", "something-funny");
-        response.addCookie(cookie);
-        return "Cookie added";
     }
 
     @PostMapping("/register")
@@ -103,7 +94,7 @@ public class AuthController {
     }
 
     @PostMapping()
-    public ResponseEntity<ResponseObject> login(String email, String password, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<ResponseObject> signIn(String email, String password, HttpServletResponse response, HttpServletRequest request) {
         logger.info("Start to authenticate user");
 
         try {
@@ -111,16 +102,12 @@ public class AuthController {
             logger.info("User is authenticated");
 
             String refreshToken = jwtService.generateRefreshToken(user);
-            refreshTokenService.saveToken(refreshToken);
 
             Cookie cookie = new Cookie("refreshToken", refreshToken);
             cookie.setMaxAge(1000 * 60 * 60 * 24);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
-            String origin = request.getHeader("Origin");
-            String domain = origin.replaceAll("http?://", "");
-            domain = domain.replaceAll(":\\d*", "");
-            cookie.setDomain(domain);
+            cookie.setDomain("localhost");
             cookie.setPath("/");
 
             response.addCookie(cookie);
@@ -160,5 +147,26 @@ public class AuthController {
                             .build()
             );
         }
+    }
+
+    @DeleteMapping("/sign-out")
+    public ResponseEntity<ResponseObject> signOut(HttpServletResponse response) {
+        logger.info("Start to sign out");
+
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+
+        response.addCookie(cookie);
+        logger.info("Sign out successfully");
+
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .statusCode(200)
+                        .message("Log out successfully")
+                        .build()
+        );
     }
 }

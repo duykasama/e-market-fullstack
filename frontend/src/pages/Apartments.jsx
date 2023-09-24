@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GridView from "../components/GridView";
 import AddNewApartment from "../components/modal/AddNewApartment";
-import Loading from "../components/ui/Loading";
 import { faFaceSadTear } from "@fortawesome/free-solid-svg-icons";
 import useFetch from "../hooks/useFetch";
 import { useState } from "react";
@@ -9,12 +8,14 @@ import { APARTMENTS_ENDPOINT } from "../data/apiInfo";
 
 function Apartments() {
   const [offset, setOffset] = useState(1);
+  const [reload, setReload] = useState(false);
   const params = new URLSearchParams({
     pageSize: 5,
     offset: offset,
   }).toString();
   const { data, isPending, error } = useFetch(
-    `${APARTMENTS_ENDPOINT}/pagination?${params}`
+    `${APARTMENTS_ENDPOINT}/pagination?${params}`,
+    reload
   );
 
   const handleNextPage = () => {
@@ -29,15 +30,17 @@ function Apartments() {
     <div className="w-full h-full p-8 flex justify-center items-center">
       {data && (
         <GridView
-          data={data.content}
+          data={data?.content}
           title={"Apartments"}
           Modal={AddNewApartment}
           isPending={isPending}
-          isFirstPage={data.first}
-          isLastPage={data.last}
+          isFirstPage={data?.first}
+          isLastPage={data?.last}
+          totalPages={data?.totalPages}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
           currentPage={offset}
+          onReload={setReload}
         />
       )}
       {error && !isPending && (

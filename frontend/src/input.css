@@ -2,20 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-.gradient-text {
-  background: linear-gradient(
-    135deg,
-    cyan,
-    blue,
-    orange,
-    cyan,
-    blue,
-    orange,
-    cyan,
-    blue,
-    orange
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  user-select: none;
+.wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.title::after {
+    content: "";
+    width: 100%;
+    height: 120%;
+    overflow: hidden;
+    background-color: white;
+    border-left: 4px solid slategray;
+    position: absolute;
+    left: 0;
+    animation: typing 3s steps(28) 1s infinite;
+    animation: name duration timing-function delay iteration-count direction fill-mode;
+}
+
+@keyframes typing {
+    100% {
+        left: 100%;
+        margin: 0 -35px 0 50px;
+    }
 }

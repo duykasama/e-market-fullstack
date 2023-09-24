@@ -22,19 +22,19 @@ function CustomerList({ customers, currentPage }) {
               {(currentPage - 1) * 5 + idx + 1}
             </div>
             <div className="flex items-center justify-center">
-              {customer.firstName}
+              {customer?.firstName}
             </div>
             <div className="flex items-center justify-center">
-              {customer.lastName}
+              {customer?.lastName}
             </div>
             <div className="flex items-center justify-center">
-              {customer.address}
+              {customer?.address}
             </div>
             <div className="flex items-center justify-center">
-              {customer.age}
+              {customer?.age}
             </div>
             <div className="flex items-center justify-center">
-              {customer.status}
+              {customer?.status}
             </div>
           </div>
         ))}

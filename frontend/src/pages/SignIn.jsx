@@ -38,7 +38,6 @@ function SignIn() {
         const accessToken = response?.data?.data;
         setAuth({
           user: formData.email,
-          pwd: formData.password,
           roles: ["USER"],
           accessToken,
         });
@@ -101,6 +100,7 @@ function SignIn() {
               id="email"
               name="email"
               autoComplete="username"
+              required
               onChange={handleFormDataChange}
               className="rounded-md p-1"
             />
@@ -114,6 +114,7 @@ function SignIn() {
               id="password"
               name="password"
               autoComplete="current-password"
+              required
               onChange={handleFormDataChange}
               className="rounded-md p-1"
             />

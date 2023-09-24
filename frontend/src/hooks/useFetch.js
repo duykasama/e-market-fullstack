@@ -3,7 +3,7 @@ import useAxiosPrivate from "./useAxiosPrivate";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
-const useFetch = (endpoint) => {
+const useFetch = (endpoint, reload) => {
   const [data, setData] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState(null);
@@ -30,7 +30,7 @@ const useFetch = (endpoint) => {
 
     setIsPending(true);
     getData();
-  }, [endpoint]);
+  }, [endpoint, reload]);
 
   return { data, isPending, error };
 };
