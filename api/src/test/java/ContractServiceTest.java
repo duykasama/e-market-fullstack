@@ -11,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -235,6 +238,77 @@ public class ContractServiceTest {
         customer.setId("customer1");
         return customer;
     }
+    @Test
+    public void testGetContractsByPage() {
+        int pageSize = 10;
+        int offset = 1;
+
+        Page<Contract> mockPage = mock(Page.class);
+        when(contractRepository.findAll(PageRequest.of(offset - 1, pageSize))).thenReturn(mockPage);
+
+        Page<Contract> result = contractService.getContractsByPage(pageSize, offset);
+
+        assertEquals(mockPage, result);
+    }
+
+    // Bổ sung test cho phương thức saveByFile khi file rỗng
+    @Test
+    public void testSaveByFileEmptyFile() {
+        MultipartFile emptyFile = createEmptyMultipartFile();
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            contractService.saveByFile(emptyFile);
+        });
+
+        assertEquals("File is empty.", exception.getMessage());
+    }
+
+    private MultipartFile createEmptyMultipartFile() {
+        return new MultipartFile() {
+            // Các phương thức không cần thiết đều được trả về mặc định
+
+            @Override
+            public String getName() {
+                return null;
+            }
+
+            @Override
+            public String getOriginalFilename() {
+                return null;
+            }
+
+            @Override
+            public String getContentType() {
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return true;
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public byte[] getBytes() throws IOException {
+                return new byte[0];
+            }
+
+            @Override
+            public InputStream getInputStream() throws IOException {
+                return null;
+            }
+
+            @Override
+            public void transferTo(File dest) throws IOException, IllegalStateException {
+
+            }
+        };
+    }
+
 
     private MultipartFile createMockMultipartFile(String fileName) throws IOException {
         return new MultipartFile() {
