@@ -1,0 +1,237 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ApartmentController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.emarket.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: ApartmentController (com.example.emarket.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ApartmentController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64.2%
+  </span>
+  <span class="absValue">
+    (43/67)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.emarket.controllers;
+&nbsp;
+&nbsp;import com.example.emarket.exceptions.BadRequestException;
+&nbsp;import com.example.emarket.models.entities.Apartment;
+&nbsp;import com.example.emarket.responses.ResponseObject;
+&nbsp;import com.example.emarket.services.ApartmentService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/apartments&quot;)
+&nbsp;public class ApartmentController {
+&nbsp;
+&nbsp;    private final ApartmentService apartmentService;
+<b class="fc">&nbsp;    private final Logger logger = LogManager.getLogger(ApartmentController.class);</b>
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ResponseObject&gt; getAllApartments() {
+<b class="fc">&nbsp;        logger.info(&quot;Getting apartments from database&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            List&lt;Apartment&gt; apartments = apartmentService.getAllApartments();</b>
+<b class="fc">&nbsp;            logger.info(&quot;Get apartments from database successfully&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            return ResponseEntity.ok(</b>
+<b class="fc">&nbsp;                    ResponseObject.builder()</b>
+<b class="fc">&nbsp;                            .statusCode(200)</b>
+<b class="fc">&nbsp;                            .message(&quot;Get apartments successfully&quot;)</b>
+<b class="fc">&nbsp;                            .data(apartments)</b>
+<b class="fc">&nbsp;                            .build()</b>
+&nbsp;            );
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError()</b>
+<b class="nc">&nbsp;                    .body(</b>
+<b class="nc">&nbsp;                      ResponseObject.builder()</b>
+<b class="nc">&nbsp;                              .statusCode(500)</b>
+<b class="nc">&nbsp;                              .message(e.getMessage())</b>
+<b class="nc">&nbsp;                              .build()</b>
+&nbsp;                    );
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/pagination&quot;)
+&nbsp;    public ResponseEntity&lt;ResponseObject&gt; getApartmentsByPage(Integer pageSize, Integer offset) {
+<b class="fc">&nbsp;        logger.info(&quot;Getting apartments by page&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            if (pageSize &lt;= 0 || offset &lt;= 0) {</b>
+<b class="fc">&nbsp;                throw new BadRequestException(&quot;Page size and offset must be greater than 0&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            Page&lt;Apartment&gt; apartments = apartmentService.getApartmentsByPage(pageSize, offset);</b>
+<b class="fc">&nbsp;            logger.info(&quot;Get apartments from database successfully&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            return ResponseEntity.ok(</b>
+<b class="fc">&nbsp;                    ResponseObject.builder()</b>
+<b class="fc">&nbsp;                            .statusCode(200)</b>
+<b class="fc">&nbsp;                            .message(&quot;Success&quot;)</b>
+<b class="fc">&nbsp;                            .data(apartments)</b>
+<b class="fc">&nbsp;                            .build()</b>
+&nbsp;            );
+<b class="fc">&nbsp;        } catch (BadRequestException e) {</b>
+<b class="fc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+&nbsp;            return ResponseEntity
+<b class="fc">&nbsp;                    .badRequest()</b>
+<b class="fc">&nbsp;                    .body(</b>
+<b class="fc">&nbsp;                            ResponseObject.builder()</b>
+<b class="fc">&nbsp;                                    .statusCode(400)</b>
+<b class="fc">&nbsp;                                    .message(e.getMessage())</b>
+<b class="fc">&nbsp;                                    .build()</b>
+&nbsp;                    );
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+&nbsp;            return ResponseEntity
+<b class="nc">&nbsp;                    .internalServerError()</b>
+<b class="nc">&nbsp;                    .body(</b>
+<b class="nc">&nbsp;                            ResponseObject.builder()</b>
+<b class="nc">&nbsp;                                    .statusCode(500)</b>
+<b class="nc">&nbsp;                                    .message(e.getMessage())</b>
+<b class="nc">&nbsp;                                    .build()</b>
+&nbsp;                    );
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;ResponseObject&gt; addApartment(
+&nbsp;            String address,
+&nbsp;            String rentalPrice,
+&nbsp;            Integer numberOfRooms
+&nbsp;    ) {
+<b class="fc">&nbsp;        logger.info(&quot;Start to add new apartment&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            Apartment apartment = Apartment.builder()</b>
+<b class="fc">&nbsp;                    .address(address)</b>
+<b class="fc">&nbsp;                    .rentalPrice(rentalPrice)</b>
+<b class="fc">&nbsp;                    .numberOfRooms(numberOfRooms.shortValue())</b>
+<b class="fc">&nbsp;                    .build();</b>
+&nbsp;
+<b class="fc">&nbsp;            apartmentService.addApartment(apartment);</b>
+<b class="fc">&nbsp;            logger.info(&quot;Added new apartment successfully&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            return ResponseEntity.ok(</b>
+<b class="fc">&nbsp;                        ResponseObject.builder()</b>
+<b class="fc">&nbsp;                                .statusCode(200)</b>
+<b class="fc">&nbsp;                                .message(&quot;New apartment created successfully&quot;)</b>
+<b class="fc">&nbsp;                                .build()</b>
+&nbsp;                    );
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError()</b>
+<b class="nc">&nbsp;                    .body(</b>
+<b class="nc">&nbsp;                            ResponseObject.builder()</b>
+<b class="nc">&nbsp;                                    .statusCode(500)</b>
+<b class="nc">&nbsp;                                    .message(e.getMessage())</b>
+<b class="nc">&nbsp;                                    .build()</b>
+&nbsp;            );
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-09-24 13:36</div>
+</div>
+</body>
+</html>

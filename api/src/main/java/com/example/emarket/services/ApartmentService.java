@@ -1,5 +1,6 @@
 package com.example.emarket.services;
 
+import com.example.emarket.exceptions.BadRequestException;
 import com.example.emarket.models.entities.Apartment;
 import com.example.emarket.repositories.ApartmentRepository;
 import org.springframework.data.domain.Page;
@@ -33,8 +34,12 @@ public class ApartmentService {
     }
 
     public Page<Apartment> getApartmentsByPage(Integer pageSize, Integer offset) {
-        return apartmentRepository.findAll(PageRequest.of(offset-1, pageSize));
+        if (pageSize <= 0 || offset <= 0) {
+            throw new BadRequestException("Page size and offset must be greater than 0");
+        }
+        return apartmentRepository.findAll(PageRequest.of(offset - 1, pageSize));
     }
+
 
     public int saveByFile (MultipartFile file){
         if (file.isEmpty()) {

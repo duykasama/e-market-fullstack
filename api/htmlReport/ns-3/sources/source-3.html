@@ -1,0 +1,245 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ContractController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.emarket.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: ContractController (com.example.emarket.controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ContractController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/66)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.emarket.controllers;
+&nbsp;
+&nbsp;import com.example.emarket.exceptions.BadRequestException;
+&nbsp;import com.example.emarket.models.entities.Contract;
+&nbsp;import com.example.emarket.responses.ResponseObject;
+&nbsp;import com.example.emarket.services.ApartmentService;
+&nbsp;import com.example.emarket.services.ContractService;
+&nbsp;import com.example.emarket.services.CustomerService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/api/contracts&quot;)
+&nbsp;public class ContractController {
+&nbsp;
+&nbsp;    private final ContractService contractService;
+&nbsp;    private final CustomerService customerService;
+&nbsp;    private final ApartmentService apartmentService;
+&nbsp;
+<b class="nc">&nbsp;    private final Logger logger = LogManager.getLogger(ContractController.class);</b>
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;ResponseObject&gt; getAllContracts() {
+<b class="nc">&nbsp;        logger.info(&quot;Getting contracts from database&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            List&lt;Contract&gt; contracts = contractService.getAllContracts();</b>
+<b class="nc">&nbsp;            logger.info(&quot;Get contracts from database successfully&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(</b>
+<b class="nc">&nbsp;                    ResponseObject.builder()</b>
+<b class="nc">&nbsp;                            .statusCode(200)</b>
+<b class="nc">&nbsp;                            .message(&quot;Get contracts successfully&quot;)</b>
+<b class="nc">&nbsp;                            .data(contracts)</b>
+<b class="nc">&nbsp;                            .build()</b>
+&nbsp;            );
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError()</b>
+<b class="nc">&nbsp;                    .body(</b>
+<b class="nc">&nbsp;                            ResponseObject.builder()</b>
+<b class="nc">&nbsp;                                    .statusCode(500)</b>
+<b class="nc">&nbsp;                                    .message(e.getMessage())</b>
+<b class="nc">&nbsp;                                    .build()</b>
+&nbsp;                    );
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/pagination&quot;)
+&nbsp;    public ResponseEntity&lt;ResponseObject&gt; getContractsByPage(Integer pageSize, Integer offset) {
+<b class="nc">&nbsp;        logger.info(&quot;Getting contracts by page&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            if (pageSize &lt;= 0 || offset &lt;= 0) {</b>
+<b class="nc">&nbsp;                throw new BadRequestException(&quot;Page size and offset must be greater than 0&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Page&lt;Contract&gt; contracts = contractService.getContractsByPage(pageSize, offset);</b>
+<b class="nc">&nbsp;            logger.info(&quot;Get contracts from database successfully&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(</b>
+<b class="nc">&nbsp;                    ResponseObject.builder()</b>
+<b class="nc">&nbsp;                            .statusCode(200)</b>
+<b class="nc">&nbsp;                            .message(&quot;Success&quot;)</b>
+<b class="nc">&nbsp;                            .data(contracts)</b>
+<b class="nc">&nbsp;                            .build()</b>
+&nbsp;            );
+<b class="nc">&nbsp;        } catch (BadRequestException e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+&nbsp;            return ResponseEntity
+<b class="nc">&nbsp;                    .badRequest()</b>
+<b class="nc">&nbsp;                    .body(</b>
+<b class="nc">&nbsp;                            ResponseObject.builder()</b>
+<b class="nc">&nbsp;                                    .statusCode(400)</b>
+<b class="nc">&nbsp;                                    .message(e.getMessage())</b>
+<b class="nc">&nbsp;                                    .build()</b>
+&nbsp;                    );
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+&nbsp;            return ResponseEntity
+<b class="nc">&nbsp;                    .internalServerError()</b>
+<b class="nc">&nbsp;                    .body(</b>
+<b class="nc">&nbsp;                            ResponseObject.builder()</b>
+<b class="nc">&nbsp;                                    .statusCode(500)</b>
+<b class="nc">&nbsp;                                    .message(e.getMessage())</b>
+<b class="nc">&nbsp;                                    .build()</b>
+&nbsp;                    );
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    public ResponseEntity&lt;ResponseObject&gt; addNewContract(
+&nbsp;            String customerId,
+&nbsp;            String apartmentId,
+&nbsp;            String startDate,
+&nbsp;            String endDate
+&nbsp;    ) {
+<b class="nc">&nbsp;        logger.info(&quot;Start to add new contract&quot;);</b>
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            Contract contract = Contract.builder()</b>
+<b class="nc">&nbsp;                    .customer(customerService.getCustomerById(customerId))</b>
+<b class="nc">&nbsp;                    .apartment(apartmentService.getApartmentById(apartmentId))</b>
+<b class="nc">&nbsp;                    .startDate(LocalDate.parse(startDate))</b>
+<b class="nc">&nbsp;                    .endDate(LocalDate.parse(endDate))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;
+<b class="nc">&nbsp;            contractService.addNewContract(contract);</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(</b>
+<b class="nc">&nbsp;                    ResponseObject.builder()</b>
+<b class="nc">&nbsp;                            .statusCode(200)</b>
+<b class="nc">&nbsp;                            .message(&quot;New contract added successfully&quot;)</b>
+<b class="nc">&nbsp;                            .build()</b>
+&nbsp;            );
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(e.getMessage());</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError().body(</b>
+<b class="nc">&nbsp;                    ResponseObject.builder()</b>
+<b class="nc">&nbsp;                            .statusCode(500)</b>
+<b class="nc">&nbsp;                            .message(e.getMessage())</b>
+<b class="nc">&nbsp;                            .build()</b>
+&nbsp;            );
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-09-24 13:36</div>
+</div>
+</body>
+</html>
