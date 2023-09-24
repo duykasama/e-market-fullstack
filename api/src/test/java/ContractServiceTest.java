@@ -1,3 +1,4 @@
+import com.example.emarket.controllers.ContractController;
 import com.example.emarket.models.entities.Apartment;
 import com.example.emarket.models.entities.Contract;
 import com.example.emarket.models.entities.Customer;
@@ -24,6 +25,8 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class ContractServiceTest {
+    @InjectMocks
+    private ContractController contractController;
 
     @InjectMocks
     private ContractService contractService;
@@ -199,6 +202,7 @@ public class ContractServiceTest {
         assertEquals(2, savedContracts.size());
     }
 
+
     @Test
     public void testSaveContractsWithMissingCustomersOrApartments() {
         List<Contract> contracts = new ArrayList<>();
@@ -212,6 +216,7 @@ public class ContractServiceTest {
         List<Contract> savedContracts = contractService.saveContracts(contracts);
 
     }
+
 
     private Contract createMockContract(String id) {
         Contract contract = new Contract();
@@ -277,5 +282,6 @@ public class ContractServiceTest {
 
             }
         };
+
     }
 }
